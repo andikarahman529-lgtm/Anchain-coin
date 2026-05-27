@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANCHAIN - Crypto Launch & Wallet</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b09;--bg2:#0d1511;--fg:#e0f0e8;--muted:#5a7a6a;--accent:#00e676;--accent2:#ffab00;--danger:#ff4757;--border:#1a2e22;--gold:#ffd700;--purple:#b388ff;--btc:#f7931a;--eth:#627eea;--usdt:#26a17b}
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:var(--border) var(--bg)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.blob{position:fixed;border-radius:50%;filter:blur(130px);pointer-events:none;z-index:0}
+.b1{width:500px;height:500px;background:rgba(0,230,118,0.06);top:-100px;left:-100px;animation:bf 25s ease-in-out infinite}
+.b2{width:400px;height:400px;background:rgba(255,171,0,0.04);bottom:-50px;right:-80px;animation:bf 30s ease-in-out infinite reverse}
+@keyframes bf{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-30px)}}
+.glass{background:rgba(17,28,22,0.88);backdrop-filter:blur(16px);border:1px solid var(--border)}
+.btn-a{background:var(--accent);color:#070b09;font-weight:700;transition:all .2s;cursor:pointer;border:none}
+.btn-a:hover{background:#00c966;transform:translateY(-1px)}.btn-a:disabled{background:var(--muted);cursor:not-allowed}
+.btn-o{border:1px solid var(--accent);color:var(--accent);background:none;transition:all .2s;cursor:pointer}
+.btn-o:hover{background:rgba(0,230,118,0.1)}
+.btn-d{background:var(--danger);color:#fff;font-weight:700;cursor:pointer;border:none}
+.btn-p{background:var(--purple);color:#070b09;font-weight:700;cursor:pointer;border:none}
+.btn-fb{background:#1877F2;color:#fff;font-weight:700;cursor:pointer;border:none}
+.btn-gg{background:#fff;color:#333;font-weight:700;cursor:pointer;border:1px solid #ccc}
+.inp{background:var(--bg2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:10px 14px;width:100%;transition:all .2s;font-family:'DM Sans',sans-serif}
+.inp:focus{outline:none;border-color:var(--accent)}
+select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%235a7a6a'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.page{display:none;animation:fu .3s ease}.page.active{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.toast{animation:si .3s ease,fo .3s ease 3.7s forwards}
+@keyframes si{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes fo{to{opacity:0;transform:translateX(40%)}}
+.nav-l{position:relative;transition:color .2s;cursor:pointer}.nav-l.act{color:var(--accent)}
+.cc{transition:all .25s}.cc:hover{transform:translateY(-3px);border-color:var(--accent)}
+.slot-c{position:relative;overflow:hidden}.slot-c::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.s1::before{background:linear-gradient(90deg,#ffd700,#ffab00)}.s2::before{background:linear-gradient(90deg,#b388ff,#7c4dff)}.s3::before{background:linear-gradient(90deg,#00e676,#69f0ae)}
+.sb{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:4px}
+.sb1{background:rgba(255,215,0,0.2);color:#ffd700}.sb2{background:rgba(179,136,255,0.2);color:#b388ff}.sb3{background:rgba(0,230,118,0.2);color:#00e676}
+.chain-btn{padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);cursor:pointer;text-align:center;transition:all .2s}
+.chain-btn:hover{border-color:var(--accent)}.chain-btn.act{border-color:var(--accent);background:rgba(0,230,118,0.05)}
+.toggle-track{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle-track.on{background:var(--accent)}.toggle-knob{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s}.toggle-track.on .toggle-knob{transform:translateX(20px)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,230,118,0.4)}70%{box-shadow:0 0 0 10px rgba(0,230,118,0)}100%{box-shadow:0 0 0 0 rgba(0,230,118,0)}}
+.plive{animation:pulse 2s infinite}
+@media(max-width:768px){.dn{display:none!important}.mn{display:flex!important}.tg{grid-template-columns:1fr!important}.sg{grid-template-columns:1fr!important}}
+@media(min-width:769px){.mn{display:none!important}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div>
+<div id="toasts" class="fixed top-4 right-4 z-[999] flex flex-col gap-2" style="max-width:360px"></div>
+
+<nav class="glass sticky top-0 z-50 px-4 lg:px-8 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-green-400 to-amber-400 flex items-center justify-center font-bold text-sm" style="color:#070b09">AN</div>
+    <span class="text-xl font-bold" style="font-family:'Space Grotesk'">ANCHAIN</span>
+  </div>
+  <div class="dn flex items-center gap-6 text-sm" id="desktop-nav">
+    <span class="nav-l act" data-p="dashboard"><i class="fas fa-chart-line mr-1"></i>Dashboard</span>
+    <span class="nav-l" data-p="launch"><i class="fas fa-rocket mr-1"></i>Launch</span>
+    <span class="nav-l" data-p="trade"><i class="fas fa-exchange-alt mr-1"></i>Trade</span>
+    <span class="nav-l" data-p="wallet"><i class="fas fa-wallet mr-1"></i>Wallet</span>
+    <span class="nav-l" data-p="mycoins"><i class="fas fa-coins mr-1"></i>Koin Saya</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <div id="balD" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm" style="background:var(--bg2);border:1px solid var(--border)">
+      <i class="fas fa-dollar-sign" style="color:var(--accent)"></i><span id="navBal">0.00</span>
+    </div>
+    <!-- Profile & Settings Icons -->
+    <button onclick="showM('profile')" class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--bg2);border:1px solid var(--border);color:var(--muted);cursor:pointer" title="Profil"><i class="fas fa-user text-sm"></i></button>
+    <button onclick="showM('settings')" class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--bg2);border:1px solid var(--border);color:var(--muted);cursor:pointer" title="Pengaturan"><i class="fas fa-cog text-sm"></i></button>
+  </div>
+</nav>
+
+<div class="mn fixed bottom-0 left-0 right-0 z-50 glass flex justify-around py-2 px-2" id="mobNav">
+  <span class="flex flex-col items-center gap-0.5 text-xs cursor-pointer mnav act" data-p="dashboard" style="color:var(--accent)"><i class="fas fa-chart-line text-lg"></i>Home</span>
+  <span class="flex flex-col items-center gap-0.5 text-xs cursor-pointer mnav" data-p="launch" style="color:var(--muted)"><i class="fas fa-rocket text-lg"></i>Launch</span>
+  <span class="flex flex-col items-center gap-0.5 text-xs cursor-pointer mnav" data-p="trade" style="color:var(--muted)"><i class="fas fa-exchange-alt text-lg"></i>Trade</span>
+  <span class="flex flex-col items-center gap-0.5 text-xs cursor-pointer mnav" data-p="wallet" style="color:var(--muted)"><i class="fas fa-wallet text-lg"></i>Wallet</span>
+  <span class="flex flex-col items-center gap-0.5 text-xs cursor-pointer mnav" data-p="mycoins" style="color:var(--muted)"><i class="fas fa-coins text-lg"></i>Koin</span>
+</div>
+
+<main class="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 py-6 pb-24">
+
+<!-- DASHBOARD -->
+<div id="pg-dashboard" class="page active">
+  <h1 class="text-3xl lg:text-4xl font-bold mb-2">Selamat Datang di <span style="color:var(--accent)">ANCHAIN</span></h1>
+  <p class="mb-6" style="color:var(--muted)">Platform Crypto Launch & Non-Custodial Wallet Modern</p>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="glass rounded-xl p-4"><p class="text-xs mb-1" style="color:var(--muted)">Saldo USD</p><p class="text-xl font-bold" id="sUsd">$0.00</p></div>
+    <div class="glass rounded-xl p-4"><p class="text-xs mb-1" style="color:var(--muted)">Koin Diluncurkan</p><p class="text-xl font-bold" id="sCoins">6</p></div>
+    <div class="glass rounded-xl p-4"><p class="text-xs mb-1" style="color:var(--muted)">DEX Listed</p><p class="text-xl font-bold" style="color:var(--accent)" id="sDex">3</p></div>
+    <div class="glass rounded-xl p-4"><p class="text-xs mb-1" style="color:var(--muted)">Admin Fee</p><p class="text-xl font-bold" style="color:var(--accent2)" id="sAdmin">$0.00</p></div>
+  </div>
+  <!-- Trending Slots -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold"><i class="fas fa-fire mr-2" style="color:var(--gold)"></i>Trending Slots</h2>
+    <button onclick="showM('slotPay')" class="btn-p px-3 py-1.5 rounded-lg text-xs"><i class="fas fa-star mr-1"></i>Promosikan Koin</button>
+  </div>
+  <div class="sg grid grid-cols-3 gap-4 mb-8" id="tSlots"></div>
+  <!-- Trending List -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold">Trending oleh Volume & Trader</h2>
+  </div>
+  <div id="tCoins" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
+</div>
+
+<!-- LAUNCH -->
+<div id="pg-launch" class="page">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-2">Luncurkan Koin Anda</h1>
+    <p class="mb-6" style="color:var(--muted)">Biaya: <span class="font-bold" style="color:var(--accent)">$5 USD</span> (Masuk ke Wallet Admin) · Min Saldo: $5</p>
+    <div class="glass rounded-xl p-6">
+      <div id="ls1"><div class="space-y-4">
+        <div><label class="block text-sm font-medium mb-1.5">Nama Koin *</label><input id="lfn" class="inp" placeholder="contoh: ANCHAIN Token" maxlength="40"></div>
+        <div><label class="block text-sm font-medium mb-1.5">Simbol Koin *</label><input id="lfs" class="inp" placeholder="contoh: ANC" maxlength="8" oninput="this.value=this.value.toUpperCase()"></div>
+        <div><label class="block text-sm font-medium mb-1.5">Total Supply *</label><input id="lfsp" class="inp" type="number" placeholder="1000000000" min="1"></div>
+        <button onclick="lStep(2)" class="btn-a w-full py-3 rounded-lg mt-4">Lanjutkan <i class="fas fa-arrow-right ml-2"></i></button>
+      </div></div>
+      <div id="ls2" style="display:none"><div class="space-y-4">
+        <div><label class="block text-sm font-medium mb-1.5">Deskripsi *</label><textarea id="lfd" class="inp" rows="3" placeholder="Jelaskan koin..." maxlength="500"></textarea></div>
+        <div><label class="block text-sm font-medium mb-1.5">Tujuan *</label><select id="lfp" class="inp"><option value="">Pilih...</option><option value="DeFi">DeFi</option><option value="Gaming">Gaming</option><option value="Meme">Meme</option><option value="NFT">NFT</option><option value="Utility">Utility</option></select></div>
+        <div class="flex gap-3"><button onclick="lStep(1)" class="btn-o flex-1 py-3 rounded-lg">Kembali</button><button onclick="lStep(3)" class="btn-a flex-1 py-3 rounded-lg">Konfirmasi <i class="fas fa-arrow-right ml-2"></i></button></div>
+      </div></div>
+      <div id="ls3" style="display:none"><div class="space-y-4">
+        <div class="rounded-xl p-4 space-y-2" style="background:var(--bg2)">
+          <div class="flex justify-between"><span style="color:var(--muted)">Nama</span><span id="rvn" class="font-medium"></span></div>
+          <div class="flex justify-between"><span style="color:var(--muted)">Simbol</span><span id="rvs" class="font-medium"></span></div>
+          <div class="flex justify-between"><span style="color:var(--muted)">Supply</span><span id="rvsp" class="font-medium"></span></div>
+          <hr style="border-color:var(--border)">
+          <div class="flex justify-between"><span style="color:var(--muted)">Biaya Launch</span><span class="font-bold" style="color:var(--danger)">$5.00 (Ke Admin)</span></div>
+          <div class="flex justify-between"><span style="color:var(--muted)">Saldo Anda</span><span id="rvb" class="font-medium"></span></div>
+        </div>
+        <div id="lWarn" class="rounded-xl p-3 text-sm" style="display:none;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);color:var(--danger)"></div>
+        <div class="flex gap-3"><button onclick="lStep(2)" class="btn-o flex-1 py-3 rounded-lg">Kembali</button><button id="lBtn" onclick="confirmLaunch()" class="btn-a flex-1 py-3 rounded-lg"><i class="fas fa-rocket mr-2"></i>Luncurkan</button></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRADE -->
+<div id="pg-trade" class="page">
+  <div class="flex flex-wrap items-center gap-3 mb-4">
+    <select id="tSel" class="inp" style="max-width:220px" onchange="selCoin(this.value)"></select>
+    <div id="tInfo" class="flex items-center gap-4 text-sm"></div>
+  </div>
+  <div class="tg grid gap-4" style="grid-template-columns:1fr 320px">
+    <div class="glass rounded-xl overflow-hidden">
+      <div class="flex flex-wrap items-center gap-2 p-3" style="border-bottom:1px solid var(--border)">
+        <div class="flex gap-1">
+          <button class="tf-b act text-xs px-2.5 py-1 rounded border" style="border-color:var(--border);cursor:pointer" onclick="setTF('1h',this)">1h</button>
+          <button class="tf-b text-xs px-2.5 py-1 rounded border" style="border-color:var(--border);cursor:pointer" onclick="setTF('1D',this)">1D</button>
+        </div>
+        <div class="flex gap-1 ml-auto">
+          <button class="tf-b act text-xs px-3 py-1 rounded border" style="border-color:var(--border);cursor:pointer" onclick="setCT('line',this)"><i class="fas fa-chart-line"></i></button>
+          <button class="tf-b text-xs px-3 py-1 rounded border" style="border-color:var(--border);cursor:pointer" onclick="setCT('candle',this)"><i class="fas fa-chart-bar"></i></button>
+        </div>
+      </div>
+      <canvas id="tChart" style="width:100%;height:380px"></canvas>
+    </div>
+    <div class="space-y-4">
+      <div class="glass rounded-xl p-4">
+        <div class="flex mb-4"><button id="buyT" class="tab-b act flex-1 py-2 rounded-l-lg text-sm font-bold" style="cursor:pointer" onclick="setOT('buy')">Beli</button><button id="sellT" class="tab-b flex-1 py-2 rounded-r-lg text-sm font-bold" style="background:var(--bg2);color:var(--muted);cursor:pointer" onclick="setOT('sell')">Jual</button></div>
+        <div class="space-y-3">
+          <input id="oAmt" class="inp" type="number" placeholder="Jumlah USD" min="0.1" step="0.01">
+          <div class="flex justify-between text-xs" style="color:var(--muted)"><span>Harga</span><span id="oPrice">$0.00</span></div>
+          <div class="flex justify-between text-xs" style="color:var(--muted)"><span>Fee ($0.05)</span><span style="color:var(--accent2)">$0.05</span></div>
+          <button onclick="placeOrder()" class="btn-a w-full py-3 rounded-lg text-sm">Place Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET -->
+<div id="pg-wallet" class="page">
+  <h1 class="text-3xl font-bold mb-6">Wallet & Deposit</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="glass rounded-xl p-6">
+      <p class="text-sm" style="color:var(--muted)">Saldo Trading USD</p>
+      <p class="text-3xl font-bold mb-4" id="wUSD">$0.00</p>
+      <div class="flex gap-2">
+        <button onclick="showM('deposit')" class="btn-a flex-1 py-2 rounded-lg text-sm"><i class="fas fa-download mr-1"></i>Deposit Crypto</button>
+        <button onclick="showM('withdraw')" class="btn-o flex-1 py-2 rounded-lg text-sm"><i class="fas fa-paper-plane mr-1"></i>Send</button>
+      </div>
+    </div>
+    <div class="glass rounded-xl p-5">
+      <p class="text-xs font-bold mb-2" style="color:var(--muted)">WALLET ADDRESS</p>
+      <p class="text-xs break-all mb-3 font-mono" id="wAddr">Setup wallet terlebih dahulu</p>
+      <button onclick="showM('profile')" class="btn-o w-full py-2 rounded-lg text-sm">Setup ANCHAIN Wallet</button>
+    </div>
+  </div>
+  <div class="glass rounded-xl p-5">
+    <h3 class="text-lg font-bold mb-4">Riwayat Transaksi</h3>
+    <div id="txH"><p class="text-sm text-center py-4" style="color:var(--muted)">Belum ada transaksi</p></div>
+  </div>
+</div>
+
+<!-- MY COINS -->
+<div id="pg-mycoins" class="page">
+  <h1 class="text-3xl font-bold mb-6">Koin Saya</h1>
+  <div id="mcList" class="space-y-4"><p class="text-sm text-center py-12" style="color:var(--muted)">Belum ada koin diluncurkan.</p></div>
+</div>
+
+</main>
+
+<!-- MODAL: PROFILE & AUTH -->
+<div id="m-profile" class="hidden fixed inset-0 z-[100] flex items-end md:items-center justify-center mo" onclick="if(event.target===this)closeM('profile')" style="background:rgba(0,0,0,0.6)">
+  <div class="glass rounded-t-2xl md:rounded-2xl p-6 w-full max-w-md mx-0 md:mx-4" style="animation:fu .3s ease;max-height:90vh;overflow-y:auto">
+    <div class="flex items-center justify-between mb-6"><h3 class="text-lg font-bold">Profil & Akun</h3><span onclick="closeM('profile')" class="cursor-pointer" style="color:var(--muted)"><i class="fas fa-times"></i></span></div>
+    
+    <!-- State: Belum Login -->
+    <div id="profAuth">
+      <p class="text-sm mb-4" style="color:var(--muted)">Daftar atau Masuk untuk mulai meluncurkan koin dan trading.</p>
+      <div class="space-y-3">
+        <div><label class="text-xs mb-1 block" style="color:var(--muted)">No. Handphone</label><div class="flex gap-2"><span class="inp py-2 px-3 text-sm" style="width:auto;min-width:55px">+62</span><input id="inpPhone" class="inp" type="tel" placeholder="8123456789"></div></div>
+        <div><label class="text-xs mb-1 block" style="color:var(--muted)">Email</label><input id="inpEmail" class="inp" type="email" placeholder="email@contoh.com"></div>
+        <button onclick="doLogin('email')" class="btn-a w-full py-3 rounded-xl">Masuk / Daftar via Email</button>
+        <div class="flex items-center gap-3 my-2"><div class="flex-1 h-px" style="background:var(--border)"></div><span class="text-xs" style="color:var(--muted)">atau</span><div class="flex-1 h-px" style="background:var(--border)"></div></div>
+        <button onclick="doLogin('google')" class="btn-gg w-full py-3 rounded-xl flex items-center justify-center gap-2"><i class="fab fa-google"></i> Lanjut dengan Google</button>
+        <button onclick="doLogin('facebook')" class="btn-fb w-full py-3 rounded-xl flex items-center justify-center gap-2"><i class="fab fa-facebook-f"></i> Lanjut dengan Facebook</button>
+      </div>
+    </div>
+
+    <!-- State: Sudah Login -->
+    <div id="profLogged" style="display:none">
+      <div class="flex items-center gap-4 mb-6 p-3 rounded-xl" style="background:var(--bg2)">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,var(--accent),var(--accent2))"><i class="fas fa-user text-xl" style="color:#070b09"></i></div>
+        <div><p class="font-bold" id="profName">User</p><p class="text-xs" style="color:var(--muted)" id="profId">user@email.com</p></div>
+      </div>
+      <div class="space-y-2 mb-6">
+        <div class="flex items-center justify-between p-3 rounded-lg" style="background:var(--bg2)"><span class="text-sm"><i class="fas fa-shield-halved mr-2" style="color:var(--accent)"></i>Non-Custodial Wallet</span><span class="text-xs font-bold" style="color:var(--accent)">Aktif</span></div>
+        <div class="flex items-center justify-between p-3 rounded-lg" style="background:var(--bg2)"><span class="text-sm"><i class="fas fa-bell mr-2" style="color:var(--accent2)"></i>Notifikasi Deposit</span><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+      </div>
+      <button onclick="doLogout()" class="btn-d w-full py-3 rounded-xl">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SETTINGS -->
+<div id="m-settings" class="hidden fixed inset-0 z-[100] flex items-center justify-center mo" onclick="if(event.target===this)closeM('settings')" style="background:rgba(0,0,0,0.6)">
+  <div class="glass rounded-2xl p-6 w-full max-w-sm mx-4" style="animation:fu .3s ease">
+    <div class="flex items-center justify-between mb-6"><h3 class="text-lg font-bold">Pengaturan</h3><span onclick="closeM('settings')" class="cursor-pointer" style="color:var(--muted)"><i class="fas fa-times"></i></span></div>
+    <div class="space-y-4">
+      <div class="flex items-center justify-between"><span class="text-sm">Notifikasi Trading</span><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+      <div class="flex items-center justify-between"><span class="text-sm">Notifikasi Deposit</span><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+      <div><label class="text-sm mb-1 block" style="color:var(--muted)">Bahasa</label><select class="inp"><option>Bahasa Indonesia</option><option>English</option></select></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CRYPTO DEPOSIT -->
+<div id="m-deposit" class="hidden fixed inset-0 z-[100] flex items-center justify-center mo" onclick="if(event.target===this)closeM('deposit')" style="background:rgba(0,0,0,0.6)">
+  <div class="glass rounded-2xl p-0 w-full max-w-lg mx-4" style="animation:fu .3s ease;max-height:90vh;overflow-y:auto">
+    <div class="p-5 flex items-center justify-between" style="border-bottom:1px solid var(--border)"><h3 class="text-lg font-bold">Deposit Crypto</h3><span onclick="closeM('deposit')" class="cursor-pointer" style="color:var(--muted)"><i class="fas fa-times"></i></span></div>
+    <div id="depStep1" class="p-5">
+      <p class="text-sm font-bold mb-3">Pilih Aset & Jaringan</p>
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <div class="chain-btn act" onclick="selDepCoin('BTC',this)"><i class="fab fa-bitcoin mr-1" style="color:var(--btc)"></i>BTC</div>
+        <div class="chain-btn" onclick="selDepCoin('ETH',this)"><i class="fab fa-ethereum mr-1" style="color:var(--eth)"></i>ETH</div>
+        <div class="chain-btn" onclick="selDepCoin('USDT',this)"><i class="fas fa-coins mr-1" style="color:var(--usdt)"></i>USDT</div>
+      </div>
+      <div id="depNetworks" class="space-y-2 mb-4"></div>
+      <div class="rounded-xl p-3 mb-4" style="background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.2)">
+        <p class="text-xs" style="color:var(--danger)"><i class="fas fa-exclamation-triangle mr-1"></i>Kirim hanya aset sesuai jaringan. Salah network = dana hilang permanen.</p>
+      </div>
+      <button onclick="startDeposit()" class="btn-a w-full py-3 rounded-xl">Tampilkan Alamat</button>
+    </div>
+    <div id="depStep2" style="display:none" class="p-5">
+      <div class="flex items-center justify-between mb-4"><p class="text-sm font-bold" id="depCoinLabel">BTC</p><span class="text-xs px-2 py-1 rounded-full font-bold" style="background:rgba(255,171,0,0.15);color:var(--accent2)" id="depTimeLeft">29:55</span></div>
+      <div class="text-center mb-4">
+        <div class="inline-block p-3 rounded-xl mb-3" style="background:#fff"><canvas id="qrCanvas"></canvas></div>
+        <div class="flex items-center gap-2 p-3 rounded-lg" style="background:var(--bg2)"><p class="text-xs break-all flex-1 font-mono" id="depAddr">bc1q...</p><button onclick="copyAddr()" class="btn-o px-3 py-1 rounded-lg text-xs"><i class="fas fa-copy"></i></button></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 text-xs mb-4" style="color:var(--muted)">
+        <div class="p-2 rounded-lg" style="background:var(--bg2)"><p>Min Deposit</p><p class="font-bold text-white" id="depMin">0.001 BTC</p></div>
+        <div class="p-2 rounded-lg" style="background:var(--bg2)"><p>Estimasi</p><p class="font-bold text-white" id="depEst">~20 mnt</p></div>
+      </div>
+      <div class="glass rounded-xl p-4 text-center" id="depStatusArea">
+        <div class="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center plive" style="background:rgba(255,171,0,0.15)"><i class="fas fa-clock text-xl" style="color:var(--accent2)"></i></div>
+        <p class="text-sm font-bold mb-1">Menunggu Deposit...</p>
+        <p class="text-xs" style="color:var(--muted)">Dana akan otomatis masuk ke Saldo USD ANCHAIN</p>
+        <button onclick="simulateDeposit()" class="btn-a mt-4 px-4 py-2 rounded-lg text-xs">Simulasi Transfer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SLOT PAY -->
+<div id="m-slotPay" class="hidden fixed inset-0 z-[100] flex items-center justify-center mo" onclick="if(event.target===this)closeM('slotPay')" style="background:rgba(0,0,0,0.6)">
+  <div class="glass rounded-2xl p-6 w-full max-w-md mx-4" style="animation:fu .3s ease">
+    <div class="flex items-center justify-between mb-4"><h3 class="text-lg font-bold">Promosikan Koin</h3><span onclick="closeM('slotPay')" class="cursor-pointer" style="color:var(--muted)"><i class="fas fa-times"></i></span></div>
+    <p class="text-sm mb-4" style="color:var(--muted)">Bayar <b>$10</b> untuk Slot #2 Trending (1-3 Jam). Fee masuk ke admin.</p>
+    <button onclick="paySlot()" class="btn-p w-full py-3 rounded-lg">Bayar $10 & Antri</button>
+  </div>
+</div>
+
+<!-- MODAL: WITHDRAW -->
+<div id="m-withdraw" class="hidden fixed inset-0 z-[100] flex items-center justify-center mo" onclick="if(event.target===this)closeM('withdraw')" style="background:rgba(0,0,0,0.6)">
+  <div class="glass rounded-2xl p-6 w-full max-w-md mx-4" style="animation:fu .3s ease">
+    <div class="flex items-center justify-between mb-4"><h3 class="text-lg font-bold">Send / Withdraw</h3><span onclick="closeM('withdraw')" class="cursor-pointer" style="color:var(--muted)"><i class="fas fa-times"></i></span></div>
+    <p class="text-sm mb-4" style="color:var(--muted)">Min withdraw $100.</p>
+    <button onclick="toast('Fitur withdraw aktif','info')" class="btn-a w-full py-3 rounded-lg">Withdraw</button>
+  </div>
+</div>
+
+
+<script>
+// ===== STATE =====
+const S={
+  loggedIn:false, profName:'', profEmail:'',
+  balUSD:0, adminBal:0,
+  coins:[], txs:[], portfolio:{}, curCoin:null,
+  chartType:'line', tf:'1h', oType:'buy',
+  priceInt:null, chartInt:null, lCount:0,
+  slot2Q:[], curSlot2:null, slot2Exp:null,
+  curSlot3:null, slot3Exp:null,
+  depCoin:'BTC', depNetwork:'Bitcoin', depTimer:null, depSeconds:1800,
+  recentTrades:[]
+};
+
+S.coins=[
+  {id:'d1',name:'SolPepe',symbol:'SOLPEPE',supply:1e9,price:0.00123,ch24:12.5,vol24:45230,totVol:245000,mcap:1230000,pur:'Meme',listed:true,creator:'demo',traders:342},
+  {id:'d2',name:'DogeMoon',symbol:'DGMN',supply:5e8,price:0.0000567,ch24:-5.3,vol24:23100,totVol:87000,mcap:28350,pur:'Meme',listed:false,creator:'demo',traders:156},
+  {id:'d3',name:'NeonSwap',symbol:'NEON',supply:2e8,price:0.0345,ch24:8.7,vol24:89200,totVol:520000,mcap:69e5,pur:'DeFi',listed:true,creator:'demo',traders:891},
+  {id:'d4',name:'MetaCraft',symbol:'MCFT',supply:3e8,price:0.0089,ch24:-2.1,vol24:15600,totVol:45000,mcap:267000,pur:'Gaming',listed:false,creator:'demo',traders:89},
+  {id:'d5',name:'CharitySol',symbol:'CSOL',supply:1e8,price:0.0212,ch24:3.4,vol24:34500,totVol:156000,mcap:212e4,pur:'Charity',listed:true,creator:'demo',traders:234},
+  {id:'d6',name:'ArtChain',symbol:'ARTC',supply:75e6,price:0.0567,ch24:15.2,vol24:67800,totVol:380000,mcap:4252500,pur:'NFT',listed:true,creator:'demo',traders:567},
+];
+
+// ===== UTILS =====
+function fp(p){if(p>=1)return p.toFixed(2);if(p>=0.01)return p.toFixed(4);if(p>=1e-4)return p.toFixed(6);return p.toFixed(8)}
+function fn(n){if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toFixed(0)}
+function toast(m,t='info'){const c={success:'var(--accent)',error:'var(--danger)',info:'var(--accent2)',warning:'var(--accent2)'};const i={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle',warning:'fa-exclamation-triangle'};const e=document.createElement('div');e.className='toast glass rounded-xl px-4 py-3 flex items-center gap-3 text-sm';e.innerHTML=`<i class="fas ${i[t]}" style="color:${c[t]}"></i><span>${m}</span>`;document.getElementById('toasts').appendChild(e);setTimeout(()=>e.remove(),4000)}
+function showM(n){document.getElementById('m-'+n).classList.remove('hidden')}
+function closeM(n){document.getElementById('m-'+n).classList.add('hidden')}
+
+// ===== NAVIGATION =====
+function nav(p){document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));document.getElementById('pg-'+p).classList.add('active');document.querySelectorAll('.nav-l').forEach(e=>e.classList.toggle('act',e.dataset.p===p));document.querySelectorAll('.mnav').forEach(e=>e.style.color=e.dataset.p===p?'var(--accent)':'var(--muted)');if(p==='trade')initTrade();if(p==='dashboard')renderDash();if(p==='wallet')renderWallet();if(p==='mycoins')renderMC()}
+document.querySelectorAll('#desktop-nav .nav-l, #mobNav .mnav').forEach(e=>e.addEventListener('click',()=>nav(e.dataset.p)));
+
+// ===== PROFILE & AUTH =====
+function updProfUI(){
+  if(S.loggedIn){document.getElementById('profAuth').style.display='none';document.getElementById('profLogged').style.display='block';document.getElementById('profName').textContent=S.profName;document.getElementById('profId').textContent=S.profEmail}
+  else{document.getElementById('profAuth').style.display='block';document.getElementById('profLogged').style.display='none'}
+}
+function doLogin(method){
+  if(method==='email'){const em=document.getElementById('inpEmail').value;if(!em){toast('Masukkan email','error');return}S.profEmail=em;S.profName=em.split('@')[0]}
+  else if(method==='google'){S.profName='Google User';S.profEmail='user@gmail.com'}
+  else if(method==='facebook'){S.profName='Facebook User';S.profEmail='user@facebook.com'}
+  S.loggedIn=true;updProfUI();toast('Berhasil masuk!','success');
+  // Auto generate wallet address on login
+  if(!document.getElementById('wAddr').textContent.includes('0x')){document.getElementById('wAddr').textContent='0x'+Array.from({length:40},()=>Math.floor(Math.random()*16).toString(16)).join('')}
+}
+function doLogout(){S.loggedIn=false;updProfUI();toast('Logout berhasil','info')}
+
+// ===== CRYPTO DEPOSIT =====
+const depCfg={
+  BTC:{networks:[{name:'Bitcoin',min:'0.001',est:'~20 mnt',addr:'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'}]},
+  ETH:{networks:[{name:'Ethereum (ERC20)',min:'0.01',est:'~3 mnt',addr:'0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18'}]},
+  USDT:{networks:[{name:'Ethereum (ERC20)',min:'10',est:'~3 mnt',addr:'0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18'},{name:'Tron (TRC20)',min:'10',est:'~1 mnt',addr:'TN2Y5mFbL3rHjZ7VnY6MqLzBdXoEeW3MkR'},{name:'BSC (BEP20)',min:'10',est:'~3 mnt',addr:'0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18'}]}
+};
+function selDepCoin(coin,btn){S.depCoin=coin;document.querySelectorAll('#depStep1 .chain-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');const nets=depCfg[coin].networks;document.getElementById('depNetworks').innerHTML=nets.map((n,i)=>`<div class="chain-btn ${i===0?'act':''}" onclick="selDepNet('${n.name}','${n.min}','${n.est}','${n.addr}',this)"><p class="text-xs font-bold">${n.name}</p></div>`).join('');selDepNet(nets[0].name,nets[0].min,nets[0].est,nets[0].addr,document.querySelector('#depNetworks .chain-btn'))}
+function selDepNet(name,min,est,addr,btn){S.depNetwork=name;S.depMin=min;S.depEst=est;S.depAddr=addr;document.querySelectorAll('#depNetworks .chain-btn').forEach(b=>b.classList.remove('act'));if(btn)btn.classList.add('act')}
+function startDeposit(){document.getElementById('depStep1').style.display='none';document.getElementById('depStep2').style.display='block';document.getElementById('depCoinLabel').textContent=S.depCoin+' ('+S.depNetwork+')';document.getElementById('depAddr').textContent=S.depAddr;document.getElementById('depMin').textContent=S.depMin+' '+S.depCoin;document.getElementById('depEst').textContent=S.depEst;QRCode.toCanvas(document.getElementById('qrCanvas'),S.depAddr,{width:140,color:{dark:'#000',light:'#fff'}});S.depSeconds=1800;if(S.depTimer)clearInterval(S.depTimer);S.depTimer=setInterval(()=>{S.depSeconds--;const m=Math.floor(S.depSeconds/60),s=S.depSeconds%60;document.getElementById('depTimeLeft').textContent=m+':'+s.toString().padStart(2,'0');if(S.depSeconds<=0)clearInterval(S.depTimer)},1000);resetDepStatus()}
+function resetDepStatus(){document.getElementById('depStatusArea').innerHTML=`<div class="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center plive" style="background:rgba(255,171,0,0.15)"><i class="fas fa-clock text-xl" style="color:var(--accent2)"></i></div><p class="text-sm font-bold mb-1">Menunggu Deposit...</p><p class="text-xs" style="color:var(--muted)">Dana akan otomatis masuk ke Saldo USD ANCHAIN</p><button onclick="simulateDeposit()" class="btn-a mt-4 px-4 py-2 rounded-lg text-xs">Simulasi Transfer</button>`}
+function simulateDeposit(){const hash='0x'+Array.from({length:16},()=>Math.floor(Math.random()*16).toString(16)).join('');document.getElementById('depStatusArea').innerHTML=`<div class="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style="background:rgba(0,230,118,0.15);color:var(--accent)"><i class="fas fa-bolt mr-1"></i>Transaksi Terdeteksi</div><p class="text-xs break-all font-mono mb-3">${hash}</p><p class="text-xs" style="color:var(--muted)">Confirming...</p>`;toast('Transaksi masuk terdeteksi!','warning');setTimeout(()=>{depositSuccess()},3000)}
+function depositSuccess(){const amt=S.depCoin==='BTC'?0.05:S.depCoin==='ETH'?0.5:100;const usd=S.depCoin==='BTC'?3400:S.depCoin==='ETH'?1200:100;S.balUSD+=usd;S.txs.unshift({type:'deposit',coin:S.depCoin,amount:amt,usd:usd,time:new Date(),status:'success'});document.getElementById('depStatusArea').innerHTML=`<div class="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style="background:rgba(0,230,118,0.2);color:var(--accent)"><i class="fas fa-check-circle mr-1"></i>Deposit Berhasil!</div><p class="text-2xl font-bold mb-1" style="color:var(--accent)">+${amt} ${S.depCoin}</p><p class="text-xs mb-3">Saldo USD bertambah $${usd}</p>`;toast('Deposit berhasil! +$'+usd,'success');updBal();renderWallet()}
+function copyAddr(){navigator.clipboard.writeText(S.depAddr);toast('Alamat disalin!','success')}
+
+// ===== SLOTS =====
+function paySlot(){if(S.balUSD<10){toast('Saldo USD tidak cukup','error');return}S.balUSD-=10;S.adminBal+=10;S.slot2Q.push({coinId:S.coins[0]?.id,dur:36e5});if(!S.curSlot2)actSlot2();closeM('slotPay');updBal();toast('Slot #2 dibayar!','success');renderDash()}
+function actSlot2(){if(!S.slot2Q.length){S.curSlot2=null;return}const n=S.slot2Q.shift(),c=S.coins.find(x=>x.id===n.coinId);if(c){S.curSlot2=c;S.slot2Exp=Date.now()+n.dur;setTimeout(()=>actSlot2(),n.dur)}}
+function actSlot3(c){S.curSlot3=c;S.slot3Exp=Date.now()+300000;setTimeout(()=>{if(S.curSlot3&&S.curSlot3.id===c.id){S.curSlot3=null}},300000)}
+
+// ===== BALANCE =====
+function updBal(){document.getElementById('navBal').textContent=S.balUSD.toFixed(2);document.getElementById('sUsd').textContent='$'+S.balUSD.toFixed(2);document.getElementById('sAdmin').textContent='$'+S.adminBal.toFixed(2)}
+
+// ===== DASHBOARD =====
+function renderDash(){
+  document.getElementById('sCoins').textContent=S.coins.length;document.getElementById('sDex').textContent=S.coins.filter(c=>c.listed).length;
+  const sv=[...S.coins].sort((a,b)=>b.vol24-a.vol24);const s1=sv[0],s2=S.curSlot2,s3=S.curSlot3;let h='';
+  if(s1){const ch=s1.ch24;h+=`<div class="slot-c s1 glass rounded-xl p-5 cursor-pointer cc" onclick="openTrade('${s1.id}')"><div class="flex items-center justify-between mb-3"><span class="sb sb1"><i class="fas fa-crown mr-1"></i>#1 TOP VOLUME</span><span class="plive w-2 h-2 rounded-full inline-block" style="background:var(--gold)"></span></div><div class="flex items-center gap-3 mb-3"><div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold" style="background:rgba(255,215,0,0.15);color:var(--gold)">${s1.symbol.slice(0,2)}</div><div><p class="font-bold">${s1.name}</p><p class="text-xs" style="color:var(--muted)">${s1.symbol}</p></div></div><div class="flex items-end justify-between"><p class="text-2xl font-bold">$${fp(s1.price)}</p><span class="text-sm font-bold" style="color:${ch>=0?'var(--accent)':'var(--danger)'}"><i class="fas ${ch>=0?'fa-caret-up':'fa-caret-down'} mr-1"></i>${Math.abs(ch).toFixed(1)}%</span></div></div>`}else{h+='<div class="slot-c s1 glass rounded-xl p-5">Kosong</div>'}
+  if(s2){const ch=s2.ch24;h+=`<div class="slot-c s2 glass rounded-xl p-5 cursor-pointer cc" onclick="openTrade('${s2.id}')"><div class="flex items-center justify-between mb-3"><span class="sb sb2"><i class="fas fa-star mr-1"></i>#2 SPONSORED</span></div><div class="flex items-center gap-3 mb-3"><div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold" style="background:rgba(179,136,255,0.15);color:var(--purple)">${s2.symbol.slice(0,2)}</div><div><p class="font-bold">${s2.name}</p><p class="text-xs" style="color:var(--muted)">Promoted</p></div></div><div class="flex items-end justify-between"><p class="text-2xl font-bold">$${fp(s2.price)}</p><span class="text-sm font-bold" style="color:${ch>=0?'var(--accent)':'var(--danger)'}"><i class="fas ${ch>=0?'fa-caret-up':'fa-caret-down'} mr-1"></i>${Math.abs(ch).toFixed(1)}%</span></div></div>`}else{h+=`<div class="slot-c s2 glass rounded-xl p-5"><div class="text-center py-4"><p class="text-sm" style="color:var(--muted)">Slot Kosong</p><button onclick="showM('slotPay')" class="btn-p px-3 py-1.5 rounded-lg text-xs mt-2"><i class="fas fa-star mr-1"></i>Promosikan</button></div></div>`}
+  if(s3){const ch=s3.ch24,rs=S.slot3Exp?Math.max(0,Math.ceil((S.slot3Exp-Date.now())/1e3)):0,rm=Math.floor(rs/60),rr=rs%60;h+=`<div class="slot-c s3 glass rounded-xl p-5 cursor-pointer cc" onclick="openTrade('${s3.id}')"><div class="flex items-center justify-between mb-3"><span class="sb sb3"><i class="fas fa-fire mr-1"></i>#3 NEW</span><span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:rgba(0,230,118,0.2);color:var(--accent)">${rm}:${rr.toString().padStart(2,'0')}</span></div><div class="flex items-center gap-3 mb-3"><div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold" style="background:rgba(0,230,118,0.15);color:var(--accent)">${s3.symbol.slice(0,2)}</div><div><p class="font-bold">${s3.name}</p><p class="text-xs" style="color:var(--muted)">Baru</p></div></div><div class="flex items-end justify-between"><p class="text-2xl font-bold">$${fp(s3.price)}</p><span class="text-sm font-bold" style="color:${ch>=0?'var(--accent)':'var(--danger)'}"><i class="fas ${ch>=0?'fa-caret-up':'fa-caret-down'} mr-1"></i>${Math.abs(ch).toFixed(1)}%</span></div></div>`}else{h+=`<div class="slot-c s3 glass rounded-xl p-5"><div class="text-center py-4"><i class="fas fa-rocket text-2xl mb-2" style="color:var(--accent);opacity:0.3"></i><p class="text-sm" style="color:var(--muted)">Luncurkan koin → 5 menit spotlight</p></div></div>`}
+  document.getElementById('tSlots').innerHTML=h;
+  const sorted=[...S.coins].sort((a,b)=>(b.vol24+(b.traders||0)*10)-(a.vol24+(a.traders||0)*10)).slice(0,6);
+  document.getElementById('tCoins').innerHTML=sorted.map(c=>{const ch=c.ch24,vp=Math.min(c.totVol/100000*100,100);return`<div class="glass rounded-xl p-4 cc cursor-pointer" onclick="openTrade('${c.id}')"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style="background:rgba(0,230,118,0.15);color:var(--accent)">${c.symbol.slice(0,2)}</div><div><p class="font-bold text-sm">${c.name}</p><p class="text-xs" style="color:var(--muted)">${c.symbol}</p></div></div>${c.listed?'<span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:rgba(0,230,118,0.2);color:var(--accent)">DEX</span>':''}</div><div class="flex items-end justify-between mb-2"><p class="text-lg font-bold">$${fp(c.price)}</p><span class="text-sm font-bold" style="color:${ch>=0?'var(--accent)':'var(--danger)'}"><i class="fas ${ch>=0?'fa-caret-up':'fa-caret-down'} mr-1"></i>${Math.abs(ch).toFixed(1)}%</span></div><div class="flex justify-between text-xs" style="color:var(--muted)"><span>Vol: $${fn(c.vol24)}</span><span>Traders: ${c.traders||0}</span></div></div>`}).join('');
+}
+function openTrade(id){S.curCoin=id;nav('trade');document.getElementById('tSel').value=id;selCoin(id)}
+
+// ===== LAUNCH =====
+let lSn=1;
+function lStep(n){
+  if(n===2){if(!document.getElementById('lfn').value.trim()){toast('Nama wajib','error');return}if(!document.getElementById('lfs').value.trim()){toast('Simbol wajib','error');return}if(!document.getElementById('lfsp').value){toast('Supply wajib','error');return}}
+  if(n===3){if(!document.getElementById('lfd').value.trim()){toast('Deskripsi wajib','error');return}if(!document.getElementById('lfp').value){toast('Tujuan wajib','error');return}document.getElementById('rvn').textContent=document.getElementById('lfn').value;document.getElementById('rvs').textContent=document.getElementById('lfs').value.toUpperCase();document.getElementById('rvsp').textContent=parseInt(document.getElementById('lfsp').value).toLocaleString();document.getElementById('rvb').textContent='$'+S.balUSD.toFixed(2);const w=document.getElementById('lWarn');if(S.balUSD<5){w.style.display='block';w.innerHTML='Saldo USD tidak cukup! Fee $5 ke admin.';document.getElementById('lBtn').disabled=true}else{w.style.display='none';document.getElementById('lBtn').disabled=false}}
+  lSn=n;['ls1','ls2','ls3'].forEach((id,i)=>{document.getElementById(id).style.display=i+1===n?'block':'none'});
+}
+function confirmLaunch(){
+  if(S.balUSD<5){toast('Saldo tidak cukup','error');return}
+  const nm=document.getElementById('lfn').value.trim(),sy=document.getElementById('lfs').value.trim().toUpperCase(),sp=parseInt(document.getElementById('lfsp').value);
+  S.balUSD-=5;S.adminBal+=5; // Fee masuk admin
+  const nc={id:'u'+Date.now(),name:nm,symbol:sy,supply:sp,desc:document.getElementById('lfd').value.trim(),pur:document.getElementById('lfp').value,price:1e-4+Math.random()*1e-3,ch24:0,vol24:0,totVol:0,mcap:sp*(1e-4+Math.random()*1e-3),listed:false,creator:'user',traders:1};
+  S.coins.unshift(nc);actSlot3(nc);
+  S.txs.unshift({type:'launch_fee',amount:5,time:new Date(),status:'completed'});
+  document.getElementById('lfn').value='';document.getElementById('lfs').value='';document.getElementById('lfsp').value='';document.getElementById('lfd').value='';document.getElementById('lfp').value='';
+  lSn=1;lStep(1);updBal();toast(nm+' berhasil diluncurkan!','success');renderDash();
+}
+
+// ===== TRADE =====
+let cD={p:[],o:[]};
+function initTrade(){const sel=document.getElementById('tSel');sel.innerHTML=S.coins.map(c=>`<option value="${c.id}">${c.symbol} - ${c.name}</option>`).join('');if(!S.curCoin)S.curCoin=S.coins[0]?.id;selCoin(S.curCoin);startPU()}
+function selCoin(id){S.curCoin=id;const c=S.coins.find(x=>x.id===id);if(!c)return;const ch=c.ch24;document.getElementById('tInfo').innerHTML=`<span class="text-xl font-bold">$${fp(c.price)}</span><span class="font-bold" style="color:${ch>=0?'var(--accent)':'var(--danger)'}"><i class="fas ${ch>=0?'fa-caret-up':'fa-caret-down'} mr-1"></i>${Math.abs(ch).toFixed(2)}%</span>`;document.getElementById('oPrice').textContent='$'+fp(c.price);genChart(c);drawC()}
+function startPU(){if(S.priceInt)clearInterval(S.priceInt);S.priceInt=setInterval(()=>{S.coins.forEach(c=>{const v=0.001+Math.random()*0.005,d=Math.random()>0.45?1:-1;c.price=Math.max(c.price*(1+d*v),1e-8);c.ch24+=d*v*10;c.vol24+=Math.random()*500;c.totVol+=Math.random()*500;c.mcap=c.supply*c.price;if(!c.listed&&c.totVol>=100000){c.listed=true;toast(c.symbol+' listed di DEX!','success')}});if(S.curCoin)selCoin(S.curCoin);updBal()},3000)}
+function genChart(c){const p=[],o=[];let pr=c.price*0.9;for(let i=0;i<100;i++){const np=Math.max(pr*(1+(Math.random()-0.48)*0.02),1e-8);p.push(np);o.push({o:pr,h:Math.max(pr,np)*1.005,l:Math.max(Math.min(pr,np)*0.995,1e-8),c:np});pr=np}p.push(c.price);cD={p,o}}
+function setTF(tf,btn){S.tf=tf;btn.parentElement.querySelectorAll('.tf-b').forEach(b=>b.classList.remove('act'));btn.classList.add('act');genChart(S.coins.find(c=>c.id===S.curCoin));drawC()}
+function setCT(ct,btn){S.chartType=ct;btn.parentElement.querySelectorAll('.tf-b').forEach(b=>b.classList.remove('act'));btn.classList.add('act');drawC()}
+function drawC(){const cv=document.getElementById('tChart');if(!cv)return;const dpr=window.devicePixelRatio||1,r=cv.getBoundingClientRect();cv.width=r.width*dpr;cv.height=r.height*dpr;const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);const W=r.width,H=r.height;ctx.fillStyle='#0a0f0c';ctx.fillRect(0,0,W,H);const p=cD.p;if(p.length<2)return;const mn=Math.min(...p),mx=Math.max(...p),rng=mx-mn||mx*0.01;const gx=i=>20+(i/(p.length-1))*(W-90),gy=pr=>20+(1-(pr-mn)/rng)*(H-50);ctx.strokeStyle='rgba(26,46,34,0.5)';ctx.lineWidth=0.5;for(let i=0;i<=4;i++){const y=20+(H-50)/4*i;ctx.beginPath();ctx.moveTo(20,y);ctx.lineTo(W-70,y);ctx.stroke();ctx.fillStyle='#5a7a6a';ctx.font='10px DM Sans';ctx.textAlign='left';ctx.fillText(fp(mx-(rng/4)*i),W-65,y+3)}
+if(S.chartType==='area'){const gr=ctx.createLinearGradient(0,20,0,H-30);gr.addColorStop(0,'rgba(0,230,118,0.2)');gr.addColorStop(1,'rgba(0,230,118,0)');ctx.beginPath();ctx.moveTo(gx(0),gy(p[0]));for(let i=1;i<p.length;i++)ctx.lineTo(gx(i),gy(p[i]));ctx.lineTo(gx(p.length-1),H-30);ctx.lineTo(gx(0),H-30);ctx.closePath();ctx.fillStyle=gr;ctx.fill()}
+if(S.chartType==='candle'){const cw=Math.max((W-90)/p.length*0.7,2),gap=(W-90)/p.length;cD.o.forEach((c,i)=>{const x=20+gap*i+gap/2,ig=c.c>=c.o,col=ig?'#00e676':'#ff4757';ctx.strokeStyle=col;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,gy(c.h));ctx.lineTo(x,gy(c.l));ctx.stroke();const bt=gy(Math.max(c.o,c.c)),bb=gy(Math.min(c.o,c.c));ctx.fillStyle=col;ctx.fillRect(x-cw/2,bt,cw,Math.max(bb-bt,1))});return}
+ctx.beginPath();ctx.moveTo(gx(0),gy(p[0]));for(let i=1;i<p.length;i++)ctx.lineTo(gx(i),gy(p[i]));ctx.strokeStyle='#00e676';ctx.lineWidth=2;ctx.stroke()}
+
+function setOT(t){S.oType=t;const b=document.getElementById('buyT'),s=document.getElementById('sellT');if(t==='buy'){b.className='btn-a flex-1 py-2 rounded-l-lg text-sm font-bold';b.style.borderRadius='8px 0 0 8px';s.className='btn-o flex-1 py-2 rounded-r-lg text-sm font-bold';s.style.background='var(--bg2)'}else{s.className='btn-d flex-1 py-2 rounded-r-lg text-sm font-bold';s.style.borderRadius='0 8px 8px 0';b.className='btn-o flex-1 py-2 rounded-l-lg text-sm font-bold';b.style.background='var(--bg2)'}}
+function placeOrder(){if(!S.loggedIn){toast('Login dulu','error');return}const c=S.coins.find(x=>x.id===S.curCoin);if(!c)return;const a=parseFloat(document.getElementById('oAmt').value)||0;if(a<1){toast('Min $1','error');return}if(a>S.balUSD){toast('Saldo tidak cukup','error');return}S.balUSD-=a;S.adminBal+=0.05;c.vol24+=a;c.totVol+=a;if(!c.listed&&c.totVol>=100000){c.listed=true;toast(c.symbol+' listed di DEX!','success')}S.txs.unshift({type:'trade',amount:a,time:new Date(),status:'completed'});document.getElementById('oAmt').value='';updBal();toast('Order berhasil!','success');renderWallet()}
+
+// ===== WALLET =====
+function renderWallet(){updBal();document.getElementById('wUSD').textContent='$'+S.balUSD.toFixed(2);const th=document.getElementById('txH');if(!S.txs.length){th.innerHTML='<p class="text-sm text-center py-4" style="color:var(--muted)">Belum ada</p>';return}th.innerHTML=S.txs.slice(0,10).map(t=>`<div class="flex items-center gap-3 p-3 rounded-lg mb-2" style="background:var(--bg2)"><div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:${t.type==='deposit'?'rgba(0,230,118,0.15)':'rgba(255,71,87,0.15)'}"><i class="fas ${t.type==='deposit'?'fa-arrow-down':'fa-arrow-up'} text-sm" style="color:${t.type==='deposit'?'var(--accent)':'var(--danger)'}"></i></div><div class="flex-1"><div class="flex justify-between"><span class="text-sm font-medium">${t.type.replace(/_/g,' ')}</span><span class="text-sm font-bold" style="color:${t.type==='deposit'?'var(--accent)':'var(--danger)'}">${t.type==='deposit'?'+':'-'}$${t.amount.toFixed(2)}</span></div><p class="text-xs" style="color:var(--muted)">${t.time.toLocaleString()}</p></div></div>`).join('')}
+
+// ===== MY COINS =====
+function renderMC(){const my=S.coins.filter(c=>c.creator==='user');const c=document.getElementById('mcList');if(!my.length){c.innerHTML='<p class="text-sm text-center py-12" style="color:var(--muted)">Belum ada koin.</p>';return}c.innerHTML=my.map(co=>`<div class="glass rounded-xl p-5 cc"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style="background:rgba(0,230,118,0.15);color:var(--accent)">${co.symbol.slice(0,2)}</div><div><p class="font-bold">${co.name} <span style="color:var(--muted)">${co.symbol}</span></p></div></div>${co.listed?'<span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:rgba(0,230,118,0.2);color:var(--accent)">DEX</span>':''}</div><div class="grid grid-cols-3 gap-3 mb-3 text-center"><div class="rounded-lg p-2" style="background:var(--bg2)"><p class="text-xs" style="color:var(--muted)">Harga</p><p class="text-sm font-bold">$${fp(co.price)}</p></div><div class="rounded-lg p-2" style="background:var(--bg2)"><p class="text-xs" style="color:var(--muted)">Volume</p><p class="text-sm font-bold">$${fn(co.totVol)}</p></div><div class="rounded-lg p-2" style="background:var(--bg2)"><p class="text-xs" style="color:var(--muted)">MCap</p><p class="text-sm font-bold">$${fn(co.mcap)}</p></div></div><button onclick="openTrade('${co.id}')" class="btn-a w-full py-2 rounded-lg text-sm">Trading</button></div>`).join('')}
+
+// ===== INIT =====
+function init(){renderDash();updBal();updProfUI();window.addEventListener('resize',()=>{if(S.curCoin&&document.getElementById('pg-trade').classList.contains('active'))drawC()});setInterval(()=>{if(document.getElementById('pg-dashboard').classList.contains('active'))renderDash()},10000)}
+init();
+</script>
+</body>
+</html>
